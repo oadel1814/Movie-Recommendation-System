@@ -37,12 +37,20 @@ def create_app():
     @app.template_filter('poster_url')
     def poster_url(poster_path):
         if poster_path:
+            # If it's already a full URL, return as is
+            if poster_path.startswith('http'):
+                return poster_path
+            # Otherwise, prepend the TMDB base URL
             return f"{Config.TMDB_IMAGE_BASE_URL}{poster_path}"
         return "https://via.placeholder.com/500x750?text=No+Poster"
     
     @app.template_filter('backdrop_url')
     def backdrop_url(backdrop_path):
         if backdrop_path:
+            # If it's already a full URL, return as is
+            if backdrop_path.startswith('http'):
+                return backdrop_path
+            # Otherwise, prepend the TMDB base URL
             return f"{Config.TMDB_IMAGE_BASE_URL}{backdrop_path}"
         return "https://via.placeholder.com/1280x720?text=No+Backdrop"
     
@@ -54,9 +62,8 @@ def create_app():
             try:
                 movies = Movie.query.all()
                 if movies:
-                    recommendation_engine = RecommendationEngine()
-                    recommendation_engine.build(movies)
-                    print("Recommendation engine initialized")
+                    recommendation_engine = RecommendationEngine(movies=movies)
+                    print(f"Recommendation engine initialized with {len(movies)} movies")
             except Exception as e:
                 print(f"Error initializing recommendation engine: {e}")
     
