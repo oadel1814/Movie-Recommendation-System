@@ -1,4 +1,85 @@
 {% extends "layout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
 {% block content %}
-<h2>Movie list (placeholder)</h2>
+<div class="hero">
+    <div class="container">
+        <h1>Discover Your Next Favorite Movie</h1>
+        <p>Personalized recommendations powered by AI</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="filters">
+        <div class="filter-group">
+            <label>Sort By:</label>
+            <select id="sortFilter" onchange="applyFilters()">
+                <option value="popularity" {% if current_sort == 'popularity' %}selected{% endif %}>Popular</option>
+                <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>Top Rated</option>
+                <option value="recent" {% if current_sort == 'recent' %}selected{% endif %}>Recent</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label>Genre:</label>
+            <select id="genreFilter" onchange="applyFilters()">
+                <option value="">All Genres</option>
+                {% for genre in genres %}
+                    <option value="{{ genre }}" {% if current_genre == genre %}selected{% endif %}>{{ genre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+    <div class="movies-grid">
+        {% for movie in movies %}
+        <div class="movie-card">
+            <a href="{{ url_for('movies.movie_detail', movie_id=movie.id) }}">
+                <img src="{{ movie.poster_path | poster_url }}" alt="{{ movie.title }}">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ {{ "%.1f"|format(movie.vote_average) }}</span>
+                        <span class="year">{{ movie.release_date[:4] if movie.release_date else 'N/A' }}</span>
+                    </div>
+                </div>
+            </a>
+            {% if current_user.is_authenticated %}
+            <button class="btn-watchlist" onclick="toggleWatchlist({{ movie.id }}, this)" data-movie-id="{{ movie.id }}">
+                + Watchlist
+            </button>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if pagination.pages > 1 %}
+    <div class="pagination">
+        {% if pagination.has_prev %}
+        <a href="?page={{ pagination.prev_num }}&sort={{ current_sort }}&genre={{ current_genre }}" class="page-link">« Prev</a>
+        {% endif %}
+        
+        <span class="page-info">Page {{ pagination.page }} of {{ pagination.pages }}</span>
+        
+        {% if pagination.has_next %}
+        <a href="?page={{ pagination.next_num }}&sort={{ current_sort }}&genre={{ current_genre }}" class="page-link">Next »</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function applyFilters() {
+    const sort = document.getElementById('sortFilter').value;
+    const genre = document.getElementById('genreFilter').value;
+    window.location.href = `/?sort=${sort}&genre=${genre}`;
+}
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
 {% endblock %}

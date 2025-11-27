@@ -1,5 +1,45 @@
 {% extends "layout.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
 {% block content %}
-<h2>Recommendations</h2>
-<p>Placeholder - show recommended movies.</p>
+<div class="container">
+    <h1>Recommended For You</h1>
+    <p class="subtitle">Based on your watchlist preferences</p>
+    
+    {% if movies %}
+    <div class="movies-grid">
+        {% for movie in movies %}
+        <div class="movie-card">
+            <a href="{{ url_for('movies.movie_detail', movie_id=movie.id) }}">
+                <img src="{{ movie.poster_path | poster_url }}" alt="{{ movie.title }}">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <div class="movie-meta">
+                        <span class="rating">⭐ {{ "%.1f"|format(movie.vote_average) }}</span>
+                        <span class="year">{{ movie.release_date[:4] if movie.release_date else 'N/A' }}</span>
+                    </div>
+                    <p class="genres">{{ movie.genres }}</p>
+                </div>
+            </a>
+            <button class="btn-watchlist" onclick="toggleWatchlist({{ movie.id }}, this)" data-movie-id="{{ movie.id }}">
+                + Watchlist
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Add movies to your watchlist to get personalized recommendations!</p>
+        <a href="{{ url_for('movies.index') }}" class="btn-browse">Browse Movies</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
+<script src="{{ url_for('static', filename='js/recommend.js') }}"></script>
 {% endblock %}
