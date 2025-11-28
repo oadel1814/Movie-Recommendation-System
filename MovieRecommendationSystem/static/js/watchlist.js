@@ -1,5 +1,8 @@
 // Toggle watchlist
+console.log('watchlist.js loaded');
+
 async function toggleWatchlist(movieId, button) {
+    console.log('toggleWatchlist called with', movieId, button);
     const isInWatchlist = button.classList.contains('in-watchlist');
     const endpoint = isInWatchlist ? '/watchlist/remove' : '/watchlist/add';
     
@@ -174,32 +177,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// Add animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeOut {
-        to {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-    }
+// // Add animations
+// const style = document.createElement('style');
+// style.textContent = `
+//     @keyframes fadeOut {
+//         to {
+//             opacity: 0;
+//             transform: scale(0.9);
+//         }
+//     }
     
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
+//     @keyframes slideInRight {
+//         from {
+//             transform: translateX(100%);
+//             opacity: 0;
+//         }
+//         to {
+//             transform: translateX(0);
+//             opacity: 1;
+//         }
+//     }
     
-    @keyframes slideOutRight {
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
+//     @keyframes slideOutRight {
+//         to {
+//             transform: translateX(100%);
+//             opacity: 0;
+//         }
+//     }
+// `;
+// document.head.appendChild(style);

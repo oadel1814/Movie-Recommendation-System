@@ -58,6 +58,41 @@ h1 {
     animation: spin 0.6s linear infinite;
 }
 
+
+.btn-watched {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background-color: #e50914;  
+    color: #fff;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-watched:hover {
+    background-color: #f6121d;
+    transform: translateY(-1px);
+}
+
+.btn-watched:active {
+    transform: translateY(0);
+}
+
+
+.movie-card a,
+.movie-card a:visited {
+    color: #fff;
+    text-decoration: none;
+}
+
+.movie-card a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+
 @keyframes spin {
     to {
         transform: rotate(360deg);

@@ -36,7 +36,10 @@
     {% else %}
     <div class="empty-state">
         <p>Your watchlist is empty!</p>
-        <a href="{{ url_for('movies.index') }}" class="btn-browse">Browse Movies</a>
+        <button class="btn-watched" onclick="window.location='{{ url_for('movies.index') }}'">
+    Browse Movies
+</button>
+
     </div>
     {% endif %}
 </div>
