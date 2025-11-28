@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g
 from flask_login import LoginManager
 from config import Config
 from database.db import init_db,db
@@ -8,8 +8,19 @@ from routes.movies import movies_bp
 from routes.user import user_bp
 from recommender.engine import RecommendationEngine
 
-# Initialize recommendation engine globally
-recommendation_engine = None
+def get_recommendation_engine():
+    """Get the recommendation engine, initializing if needed."""
+    if 'recommendation_engine' not in g:
+        try:
+            movies = Movie.query.all()
+            if movies:
+                g.recommendation_engine = RecommendationEngine(movies=movies)
+            else:
+                g.recommendation_engine = None
+        except Exception as e:
+            print(f"Error getting recommendation engine: {e}")
+            g.recommendation_engine = None
+    return g.recommendation_engine
 
 def create_app():
     app = Flask(__name__)
@@ -54,18 +65,10 @@ def create_app():
             return f"{Config.TMDB_IMAGE_BASE_URL}{backdrop_path}"
         return "https://via.placeholder.com/1280x720?text=No+Backdrop"
     
-    # Initialize recommendation engine after first request
-    @app.before_request
-    def initialize_recommendation_engine():
-        global recommendation_engine
-        if recommendation_engine is None:
-            try:
-                movies = Movie.query.all()
-                if movies:
-                    recommendation_engine = RecommendationEngine(movies=movies)
-                    print(f"Recommendation engine initialized with {len(movies)} movies")
-            except Exception as e:
-                print(f"Error initializing recommendation engine: {e}")
+    # Make recommendation engine available in templates
+    @app.context_processor
+    def inject_recommendation_engine():
+        return {'get_recommendation_engine': get_recommendation_engine}
     
     # Create tables
     with app.app_context():

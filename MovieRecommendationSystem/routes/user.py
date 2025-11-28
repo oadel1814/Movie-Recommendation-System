@@ -99,7 +99,9 @@ def toggle_watched():
 @user_bp.route('/recommendations')
 @login_required
 def recommendations():
-    from app import recommendation_engine
+    from app import get_recommendation_engine
+    
+    recommendation_engine = get_recommendation_engine()
     
     if not recommendation_engine or not recommendation_engine.is_fitted:
         flash('Recommendation engine not ready. Please try again later.', 'warning')

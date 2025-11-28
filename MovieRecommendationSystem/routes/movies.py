@@ -50,8 +50,9 @@ def movie_detail(movie_id):
     movie = Movie.query.get_or_404(movie_id)
     
     # Get similar movies
-    from app import recommendation_engine
+    from app import get_recommendation_engine
     similar_movies = []
+    recommendation_engine = get_recommendation_engine()
     if recommendation_engine and recommendation_engine.is_fitted:
         similar = recommendation_engine.get_similar_movies(movie_id, top_n=6)
         similar_movies = [m for m, score in similar]
